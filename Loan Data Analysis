@@ -1,0 +1,79 @@
+# In this SQL I am analyzing *and* querying data based on applicantions that were approved or denied which includes various information such as gender, martial status, education, income, and credit history.
+
+# Created loan_data table in pgAdmin 4 to upload csv file to database.
+
+CREATE TABLE loan_data (
+  Loan_ID VARCHAR(15) PRIMARY KEY,
+  Gender VARCHAR(10),
+  Married VARCHAR(10),
+  Dependents INTEGER,
+  Education VARCHAR(15),
+  Self_Employed VARCHAR(5),
+  ApplicantIncome INTEGER,
+  CoapplicantIncome INTEGER,
+  LoanAmount INTEGER,
+  Loan_Amount_Term INTEGER,
+  Credit_History INTEGER,
+  Property_Area VARCHAR(10),
+  Loan_Status VARCHAR(5)
+);
+
+SELECT *
+FROM loan_data;
+
+# What is the average applicant income for applicants that were approved, and applicants not approved? 
+
+SELECT AVG(applicantincome) AS average_income, loan_status
+FROM loan_data
+GROUP BY loan_status;
+
+# How many applicants were self-employed and approved for a loan?
+
+SELECT COUNT(loan_id) AS self_employed_approvals
+FROM loan_data
+WHERE self_employed = 'Yes'
+AND loan_status = 'Y'
+AND self_employed IS NOT NULL;
+
+# Review the differences in loan approval rates based on gender and educational attainment.
+
+SELECT COUNT(loan_id) AS applicant_count, gender, education, loan_status
+FROM loan_data
+WHERE loan_status = 'Y'
+GROUP BY gender, education, loan_status;
+
+# Provide a list of applications that were approved but have an income of less than 2000. List their gender, marital status, education, and loan amount they were approved for.
+
+SELECT loan_id, gender, married, education, applicantincome, loanamount
+FROM loan_data
+WHERE loan_status = 'Y'
+GROUP BY loan_id, gender, married, education, applicantincome, loanamount
+HAVING applicantincome < 2000;
+
+# How many applications were from applicants who were in “Urban” or “Semiurban” property areas?
+
+SELECT COUNT(loan_id) AS applications,loan_status
+FROM loan_data
+WHERE property_area = 'Urban' OR property_area = 'Semiurban'
+GROUP BY loan_status;
+
+# How many applications were approved/declined where applicants are in urban, rural, and semi-urban areas?
+
+SELECT COUNT(loan_id) AS applications, loan_status, property_area
+FROM loan_data
+GROUP BY loan_status, property_area;
+
+# What’s the average co-applicant income of approved applicants with an income of over 2000? 
+
+SELECT ROUND(AVG(coapplicantincome),0) AS coapplicant_income
+FROM loan_data
+WHERE loan_status = 'Y'
+AND coapplicantincome > 1
+AND applicantincome > 2000;
+
+# Are individuals with a credit history more likely to be approved for a new loan?
+
+SELECT COUNT(loan_id) AS applications, credit_history, loan_status
+FROM loan_data
+WHERE credit_history IS NOT NULL
+GROUP BY credit_history, loan_status;
