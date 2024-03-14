@@ -1,4 +1,4 @@
-# In this SQL I am analyzing *and* querying data based on applicantions that were approved or denied which includes various information such as gender, martial status, education, income, and credit history.
+# In this SQL I am analyzing *and* querying data based on applications that were approved or denied which includes various information such as gender, martial status, education, income, and credit history.
 
 # Created loan_data table in pgAdmin 4 to upload csv file to database.
 
